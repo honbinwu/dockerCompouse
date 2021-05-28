@@ -13,7 +13,7 @@ parameters:
         username:
           type: string
           description: username
-          example: "owenlu"
+          example: "hongbinwu"
         password:
           type: string
           example: "password"
@@ -21,7 +21,7 @@ parameters:
 
 responses:
   200:
-    description: create successed
+    description: create successed you are good
     schema:
       properties:
         success:
