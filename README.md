@@ -3,10 +3,10 @@
 # Start service:
 
 ```sh
-$ docker-compose up-d
+$ docker-compose up -d
 ```
 
-# Stop
+# Stop service:
 
 ```sh
 $docker-compose down
