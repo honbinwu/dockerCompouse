@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>List user</title>
+    </head>
+    <body>
+          
+             
+            {% for cus in user %}
+            <li>
+                username:{{cus.username}},
+                password:{{cus.password}}
+                
+            </li>
+            {% endfor %}
+            
+            
+    </body>
+</html>

@@ -6,7 +6,7 @@
 $ docker-compose up -d
 ```
 
-# Stop all service:
+# delete all service:
 
 ```sh
 $docker-compose down

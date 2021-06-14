@@ -1,19 +1,40 @@
-import pika
-import sys
+from flask import Flask, render_template, request, jsonify, make_response, send_from_directory, redirect, url_for
+import json
+from flask_pymongo import PyMongo
+import logging
+import warnings
+import base64
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.8.101'))
-channel = connection.channel()
+app = Flask(__name__)
 
-channel.queue_declare(queue='task_queue', durable=True)
+mongo = PyMongo(app, uri="mongodb://rs2:27042/test")
 
-message = ' '.join(sys.argv[1:]) or "NPTU Cloud Computing"
 
-channel.basic_publish(
-    exchange='',
-    routing_key='task_queue',
-    body=message,
-    properties=pika.BasicProperties(delivery_mode=2)
-)
 
-print(" [x] Sent %r" % message)
-connection.close()
+@app.route('/login', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        username=request.values['username']
+        password=request.values['password']
+        if (username=="")or(password==""):
+           return "<h1>input error!</h1>"
+        else:
+           users = mongo.db.col.find_one({'username':username})
+           if users:
+               name = users['username']
+               psd  = users['password'] 
+               epassword = base64.b64encode(password.encode('utf-8')).decode()
+           
+               if (name==username)and(psd==epassword):
+                   return render_template('app.html')
+               else:
+                   return "<h1>login error check the name or password!</h1>"    
+           else:
+               return "<h1>test login error check the name or password!</h1>"
+    else:
+        return render_template('login.html')
+  
+
+if __name__ =='__main__':
+    app.run(host='0.0.0.0',port=5002,debug=True)

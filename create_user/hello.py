@@ -1,9 +1,8 @@
-
-
 from flask import Flask, render_template, request, jsonify, make_response, json, send_from_directory, redirect, url_for
 import pika
 import logging
 import warnings
+import base64
 
 # packages for swagger
 from flasgger import Swagger
@@ -21,54 +20,51 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # create user restful API
 @app.route('/create_user', methods=['POST'])
-@app.route('/',methods=['POST'])
+@app.route('/',methods=['GET','POST'])
 @swag_from('apidocs/api_create_user.yml')
 def create_user():
+    if request.method == 'POST':
+        username=request.values['username']
+        password=request.values['password']
+        if (username=="")or(password==""):
+           return "<h1>input error! please enter again</h1>"
+        else:
+            encry = base64.b64encode(password.encode('utf-8')).decode()
 
-    # retrive post body
-    jsonobj = request.get_json(silent=True)
-    username = json.dumps(jsonobj['username']).replace("\"", "")
-    password = json.dumps(jsonobj['password']).replace("\"", "")
 
-    logging.info('username:', username)
-    logging.info('password:', password)
+            logging.info('username:', username)
+            logging.info('password:', encry)
 
-    message = dict()
-    message['username'] = username
-    message['password'] = password
+            message = dict()
+            message['username'] = username
+            message['password'] = encry
 
     # push username and password
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672))
-    channel = connection.channel()
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672))
+            channel = connection.channel()
 
-    channel.queue_declare(queue='task_queue', durable=True)
+            channel.queue_declare(queue='task_queue', durable=True)
     #message = ' '.join(sys.argv[1:]) or "NPTU Cloud Computing"
 
-    message = json.dumps(message)
-    logging.info('message:', message)
+            message = json.dumps(message)
+            logging.info('message:', message)
 
-    channel.basic_publish(
-        exchange='',
-        routing_key='task_queue',
-        body=message,
-        properties=pika.BasicProperties(delivery_mode=2)
-    )
+            channel.basic_publish(
+                exchange='',
+                routing_key='task_queue',
+                body=message,
+                properties=pika.BasicProperties(delivery_mode=2)
+            )
 
-    connection.close()
+            connection.close()
 
     # reture requests
-    res = dict()
-    res['success'] = True
-    res['message'] = 'Create user successed, your username=' + username
-    res = make_response(jsonify(res), 200)
-    return res
+    
+            return render_template('createuser.html',mes='Create user successed,your username='+username)
 
-
-
-@app.route('/')
-def index():
-    return 'Web App with Python Flask!'
+    else:
+        return render_template('createuser.html',mes="")
 
 
 if __name__ =='__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000,debug=True)
