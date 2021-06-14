@@ -1,12 +1,36 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>my service</title>
-    </head>
-    <body>
-	    <p>Hello</p>
-	    <a href ="https://www.google.com/">Google</a>
-    </body>    
-</html>
-
+<div class="wrap">
+   <div class="computer">速食店點餐</div>
+   <table>
+  <tr>
+    <th>價目表</th>	  
+    <th>漢堡</th>
+    <th>可樂</th>
+    <th>薯條</th>
+    <th>雞塊</th>
+  </tr>
+  <tr>
+    <td>售價</td>
+    <td>30元</td>
+    <td>25元</td>
+    <td>20元</td>
+    <td>15元</td>
+  </tr>
+</table>
+   <p><input id="ham" type="text">個漢堡</p>
+   <p><input  id="cola" type="text">杯可樂</p>
+   <p><input  id="french" type="text">包薯條</p>
+   <p><input  id="chicken" type="text">份雞塊</p>
+   <input id="count" value="結算" type="button"></input>
+   <nobr> 總計是 <em id="total"></em>元</nobr>
+</div>
+<script>
+document.getElementById('count').onclick = function(){
+    var ham = parseInt(document.getElementById('ham').value);
+    var cola = parseInt(document.getElementById('cola').value);
+    var french = parseInt(document.getElementById('french').value);
+    var chicken = parseInt(document.getElementById('chicken').value);	
+    var price = ham*30+cola*25+french*20+chicken*15;
+    document.getElementById('total').textContent = price;
+    console.log(typeof(price));
+};	
+</script>	
