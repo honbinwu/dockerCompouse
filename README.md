@@ -56,6 +56,6 @@ rs.initiate(cfg);
 
 # mongo database Query the permissions of each database
 ```sh
-rs.status().members.forEach(m =&gt; print (`${m.name} =&gt; ${m.stateStr}`))
+rs.status().members.forEach(m => print (`${m.name} => ${m.stateStr}`))
 ```
 
